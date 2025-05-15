@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+.hero {
+    background-image: url('/image.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  @media (min-width: 768px) {
+    .hero {
+      background-position: 50% 20%; /* or 50% 20%, etc. */
+    }
+  }
