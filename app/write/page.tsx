@@ -7,18 +7,18 @@ import { auth} from "@/lib/firebase";
 export default function WriteLetterPage() {
   const [letter, setLetter] = useState("");
   const [status, setStatus] = useState("");
-  const [received, setReceived] = useState("");
+  // const [received, setReceived] = useState("");
 
   const handleSubmit = async () => {
     setStatus("submitting...");
     
 
     try {
-        console.log("Current Firebase user:", auth.currentUser);
+       
       const result = await submitLetter(letter);
 
       if (result.status === "matched") {
-        setReceived(result.receivedContent);
+        // setReceived(result.receivedContent);
         setStatus("You got a letter back!");
       } else {
         setStatus("Letter sent! We'll match you soon.");
@@ -47,12 +47,12 @@ export default function WriteLetterPage() {
       </button>
       <p className="mt-4 text-gray-600">{status}</p>
 
-      {received && (
+      {/* {received && (
         <div className="mt-6 p-4 border bg-gray-100 rounded">
           <h2 className="text-xl font-semibold mb-2">You received a letter:</h2>
           <p className="italic">{received}</p>
         </div>
-      )}
+      )} */}
     </section>
   );
 }

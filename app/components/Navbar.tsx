@@ -11,7 +11,7 @@ const Navbar = () => {
       </div>
       <div className="space-x-5 ">
         <a href="">About</a>
-        <a href="">Inbox</a>
+        <a href="/inbox">Inbox</a>
         {user ? (
           <div className="relative  inline-block">
             <button
