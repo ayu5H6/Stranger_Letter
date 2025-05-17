@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "firebase": "^11.7.1",
     "next": "^15.3.2",
     "react": "^19.1.0",

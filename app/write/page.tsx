@@ -1,20 +1,28 @@
 "use client";
-
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useState } from "react";
 import { submitLetter } from "@/lib/letterActions";
-import { auth} from "@/lib/firebase";
-
+import { db, auth } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 export default function WriteLetterPage() {
   const [letter, setLetter] = useState("");
   const [status, setStatus] = useState("");
   // const [received, setReceived] = useState("");
 
+  const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
+
+  async function containsBadLanguage(content:string):Promise<boolean> {
+    const model=genAI.getGenerativeModel({model:"models/gemini-1.5-flash"});
+    const prompt = `Does the following message contain offensive, harmful, or abusive language? Respond with only "yes" or "no":\n\n${content}`;
+    const reuslt=await model.generateContent(prompt);
+    const text=reuslt.response.text().toLowerCase().trim();
+    return text.includes("yes")
+
+  }
   const handleSubmit = async () => {
     setStatus("submitting...");
-    
 
     try {
-       
       const result = await submitLetter(letter);
 
       if (result.status === "matched") {
@@ -28,6 +36,25 @@ export default function WriteLetterPage() {
       setStatus("Error submitting letter: " + err.message);
     }
   };
+
+  async function submitLetter(content:string): Promise<{status:string}>{
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not logged in.");
+    const isAbusive = await containsBadLanguage(content);
+    if (isAbusive) {
+      throw new Error("Your letter contains abusive or harmful language");
+    }
+    // Proceed with Firestore logic
+    await addDoc(collection(db, "letters"), {
+      content,
+      senderId: user.uid,
+      recipientId: null, // matching logic to be handled separately
+      createdAt: serverTimestamp(),
+      matched: false,
+    });
+
+    return { status: "waiting" };
+  }
 
   return (
     <section className="max-w-xl mx-auto py-20 px-4 text-center">

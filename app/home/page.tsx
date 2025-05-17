@@ -5,7 +5,10 @@ const page = () => {
   return (
     <>
       {/* HERO */}
-      <section className="flex flex-col items-center justify-center py-20 text-center px-4 hero">
+      <section
+        id="about"
+         className="flex flex-col items-center justify-center py-20 text-center px-4 hero"
+      >
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-200">
           💌 Welcome to Stranger Letters
         </h1>

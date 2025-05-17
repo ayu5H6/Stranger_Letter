@@ -6,7 +6,9 @@ import {
   query,
   where,
   getDocs,
-  Timestamp,
+  orderBy,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { onAuthStateChanged, User } from "firebase/auth";
 
@@ -23,6 +25,9 @@ interface Letter {
 export default function InboxPage() {
   const [letters, setLetters] = useState<Letter[]>([]);
   const [loading, setLoading] = useState(true);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyContent, setReplyContent] = useState("");
+  const [sentReplies, setSentReplies] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
@@ -48,7 +53,8 @@ export default function InboxPage() {
     try {
       const q = query(
         collection(db, "letters"),
-        where("recipientId", "==", user.uid)
+        where("recipientId", "==", user.uid),
+        orderBy("createdAt", "desc")
       );
       const snapshot = await getDocs(q);
 
@@ -61,6 +67,31 @@ export default function InboxPage() {
       console.error("Error fetching letters:", error);
     }
     setLoading(false);
+    
+  }
+
+  async function sendReply(letter: Letter) {
+    if (!replyContent.trim()) return;
+
+    const user = auth.currentUser;
+    if (!user) return alert("User not logged in");
+
+    try {
+      await addDoc(collection(db, "letters"), {
+        senderId: user.uid,
+        recipientId: letter.senderId,
+        content: replyContent,
+        createdAt: serverTimestamp(),
+        matched: false, // or true if needed
+      });
+
+      // Mark this letter as replied
+      setSentReplies(new Set(sentReplies).add(letter.id));
+      setReplyingTo(null);
+      setReplyContent("");
+    } catch (e) {
+      console.error("Error sending reply:", e);
+    }
   }
   return (
     <section className="max-w-2xl mx-auto py-10 px-4">
@@ -71,13 +102,36 @@ export default function InboxPage() {
       ) : letters.length === 0 ? (
         <p>No recent letters. Write one to get matched!</p>
       ) : (
-        <ul className="space-y-4">
+        <ul className="">
           {letters.map((letter) => (
-            <li key={letter.id} className="bg-white p-4 rounded shadow">
-              <p className="italic text-gray-700">{letter.content}</p>
-              <span className="text-sm text-gray-400">
-                Received: {letter.createdAt?.toDate().toLocaleString()}
-              </span>
+            <li key={letter.id} className="bg-red-200 p-6 border-4 mt-4">
+              <p className="">{letter.content}</p>
+              <small>{letter.createdAt?.toDate().toLocaleString()}</small>
+
+              {sentReplies.has(letter.id) ? (
+                <p className="text-green-600">Replied ✅</p>
+              ) : (
+                <>
+                  {replyingTo === letter.id ? (
+                    <>
+                      <textarea className="bg-gray-300"
+                        value={replyContent}
+                        onChange={(e) => setReplyContent(e.target.value)}
+                        rows={3}
+                        placeholder="Write your reply..."
+                      />
+                      <button onClick={() => sendReply(letter)}>Send</button>
+                      <button onClick={() => setReplyingTo(null)}>
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <button className="ml-4 bg-blue-300 p-2" onClick={() => setReplyingTo(letter.id)}>
+                      Reply
+                    </button>
+                  )}
+                </>
+              )}
             </li>
           ))}
         </ul>

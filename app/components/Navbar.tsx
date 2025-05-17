@@ -1,27 +1,49 @@
 "use client";
 import { useAuth } from "../context/AuthContext";
-import { useState } from "react";
+import { useState,useEffect,useRef } from "react";
+import Link from "next/link";
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const [open, setOpen]=useState(false)
+  const [open, setOpen]=useState(false);
+  const buttonRef=useRef<HTMLButtonElement>(null);
+  const menuRef=useRef<HTMLDivElement>(null);
+  useEffect(()=>{
+    const handleClickOutside=(event:MouseEvent)=>{
+      if(menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ){
+       setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown",handleClickOutside);
+    return()=>{
+      document.removeEventListener("mousedown",handleClickOutside)
+    }
+  },[])
   return (
     <nav className="flex justify-between bg-red-400 p-4">
       <div>
         <a href="">SL</a>
       </div>
       <div className="space-x-5 ">
-        <a href="">About</a>
+        <Link href="/#about">About</Link>
         <a href="/inbox">Inbox</a>
         {user ? (
           <div className="relative  inline-block">
             <button
+              ref={buttonRef}
               onClick={() => setOpen((prev) => !prev)}
               className="px-2 py-1 "
             >
               {user.displayName || user.email}
             </button>
             {open && (
-              <div className="absolute right-0 bg-white text-black shadow-md mt-1 z-10 rounded">
+              <div
+                className="absolute right-0 bg-white text-black shadow-md mt-1 z-10 rounded"
+                ref={menuRef}
+              >
                 <button
                   onClick={() => {
                     logout();
