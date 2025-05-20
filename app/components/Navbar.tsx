@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useState,useEffect,useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BellRing } from "lucide-react";
+import { Pencil } from "lucide-react";
 const Navbar = () => {
   const { user, logout } = useAuth();
   const [open, setOpen]=useState(false);
@@ -30,17 +30,16 @@ const Navbar = () => {
     }
   },[])
   return (
-    <nav className="flex justify-between bg-primary p-4 text-white text-xl">
+    <nav className="flex justify-between bg-primary p-3 md:p-4 text-white text-xl">
       <div>
-        <a href="">SL</a>
+        <a href="" className="md:mt-6">
+          <Pencil size={24}/>
+        </a>
       </div>
       <div className="space-x-5 ">
         <Link href="/#about">About</Link>
-        <Link
-          href={isInbox ? "/write" : "/inbox"}
-          className=""
-        >
-          {isInbox ? "Write a Letter" : "Inbox"}
+        <Link href={isInbox ? "/write" : "/inbox"} className="">
+          {isInbox ? "Write" : "Inbox"}
         </Link>
         {user ? (
           <div className="relative  inline-block">

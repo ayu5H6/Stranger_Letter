@@ -49,9 +49,9 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center h-screen  bg-primary/10">
+    <section className="flex flex-col items-center justify-center   bg-primary/10">
       <form
-        className="bg-gray-50 py-20 px-6  w-full max-w-sm border border-black rounded-xl  shadow-sm shadow-black"
+        className="bg-gray-50 py-20 px-6   border border-black md:rounded-xl  shadow-sm shadow-black"
         onSubmit={handleAuth}
       >
         <h1 className="text-2xl font-semibold mb-6 text-center">
@@ -103,6 +103,6 @@ export default function LoginPage() {
             : "Don't have an account? Register"}
         </p>
       </form>
-    </main>
+    </section>
   );
 }
