@@ -8,6 +8,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { Span } from "next/dist/trace";
 
 export default function LoginPage() {
   const [userName, setUserName] = useState("");
@@ -48,18 +49,18 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center h-screen  ">
+    <main className="flex flex-col items-center justify-center h-screen  bg-primary/10">
       <form
-        className="bg-white p-5 rounded-lg shadow-md w-full max-w-sm border-4 "
+        className="bg-gray-50 py-20 px-6  w-full max-w-sm border border-black rounded-xl  shadow-sm shadow-black"
         onSubmit={handleAuth}
       >
-        <h1 className="text-xl font-semibold mb-4 text-center">
-          {isRegistering ? "Register" : "Login"}
+        <h1 className="text-2xl font-semibold mb-6 text-center">
+          {isRegistering ? "REGISTER" : "LOGIN"}
         </h1>
         {isRegistering && (
           <input
             type="text"
-            className="w-full mb-3 p-2 border rounded"
+            className="w-full mb-6 p-2 border rounded "
             placeholder="Username"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
@@ -69,7 +70,7 @@ export default function LoginPage() {
 
         <input
           type="email"
-          className="w-full mb-3 p-2 border rounded"
+          className="w-full mb-6 p-2 border rounded"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -77,17 +78,17 @@ export default function LoginPage() {
         />
         <input
           type="password"
-          className="w-full mb-3 p-2 border rounded"
+          className="w-full mb-8 p-2 border rounded "
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button className="w-full bg-black text-white mb-4 py-2 rounded">
+        <button className="w-full bg-accent/70 text-white mb-4 py-2 rounded cursor-pointer hover:scale-105 hover:bg-accent/80">
           {isRegistering ? "Sign Up" : "Login"}
         </button>
         <button
-          className="w-full bg-black text-white py-2 rounded"
+          className="w-full bg-gray-100 border text-black py-2 rounded cursor-pointer hover:scale-105 hover:bg-gray-200"
           onClick={handleGoogleLogin}
           type="button"
         >

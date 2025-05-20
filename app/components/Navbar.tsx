@@ -2,11 +2,18 @@
 import { useAuth } from "../context/AuthContext";
 import { useState,useEffect,useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { BellRing } from "lucide-react";
 const Navbar = () => {
   const { user, logout } = useAuth();
   const [open, setOpen]=useState(false);
   const buttonRef=useRef<HTMLButtonElement>(null);
   const menuRef=useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  const isInbox = pathname === "/inbox";
+
+
   useEffect(()=>{
     const handleClickOutside=(event:MouseEvent)=>{
       if(menuRef.current &&
@@ -29,7 +36,12 @@ const Navbar = () => {
       </div>
       <div className="space-x-5 ">
         <Link href="/#about">About</Link>
-        <a href="/inbox">Inbox</a>
+        <Link
+          href={isInbox ? "/write" : "/inbox"}
+          className=""
+        >
+          {isInbox ? "Write a Letter" : "Inbox"}
+        </Link>
         {user ? (
           <div className="relative  inline-block">
             <button
