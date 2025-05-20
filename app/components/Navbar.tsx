@@ -23,7 +23,7 @@ const Navbar = () => {
     }
   },[])
   return (
-    <nav className="flex justify-between bg-red-400 p-4">
+    <nav className="flex justify-between bg-primary p-4 text-white text-xl">
       <div>
         <a href="">SL</a>
       </div>

@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
-.hero {
-    background-image: url('/image.jpg');
-    background-size: cover;
-    background-position: center;
-  }
+@theme {
+  --color-primary: #7e4cc5;
+  --color-secondary: #ae81ec;
+  --color-accent: #8b3cfb;
+}
+
 
   @media (min-width: 768px) {
     .hero {
